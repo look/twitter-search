@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: twitter-search
 version: !ruby/object:Gem::Version 
-  version: 0.5.2
+  version: 0.5.3
 platform: ruby
 authors: 
 - Dustin Sallings
