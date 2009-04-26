@@ -35,7 +35,6 @@ files:
 - Rakefile
 - README.markdown
 - TODO.markdown
-- VERSION.yml
 - lib/twitter_search.rb
 has_rdoc: false
 homepage: http://github.com/dancroak/twitter-search
