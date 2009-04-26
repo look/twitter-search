@@ -2,6 +2,12 @@
 
 require File.join(File.dirname(__FILE__), 'test_helper')
 
+
+require 'fake_web'
+
+FakeWeb.allow_net_connect = false # an insurance policy against hitting http://twitter.com
+
+
 class TwitterSearchTest < Test::Unit::TestCase # :nodoc:
 
   context "@client.query 'Obama'" do
@@ -274,11 +280,44 @@ class TwitterSearchTest < Test::Unit::TestCase # :nodoc:
       @tweets = read_yaml :file => 'results_per_page'
     end
 
+
     should_find_tweets
     should_have_text_for_all_tweets
     should_return_page 1
     should_return_tweets_in_sets_of 30
   end
+
+  context "@client.query :q => 'a Google(or is it Twitter)whack', :rpp => '2'" do
+    setup do
+      @tweets = read_yaml :file => 'only_one_result'
+    end
+
+    should 'not be able to get next page of @tweets' do
+      assert ! @tweets.has_next_page?
+      #assert_raise Exception, @tweets.next_page
+    end
+  end
+
+  context "@client.query :q => 'almost a Google(or is it Twitter)whack', :rpp => '1'" do
+    setup do
+      @tweets = read_yaml :file => 'only_two_results'
+      @next_page_of_tweets = read_yaml :file => 'only_two_results_page_2'
+    end
+
+    should 'be able to get next page of @tweets' do
+      assert @tweets.has_next_page?
+
+      FakeWeb.register_uri( :get,
+                            "#{TwitterSearch::Client::TWITTER_API_URL}?max_id=100&q=almost+a+Google%28or+is+it+Twitter%29whack&rpp=1&page=2",
+                            :string => '{"results":[{"text":"Boston Celtics-Los Angeles Lakers, Halftime http://tinyurl.com/673s24","from_user":"nbatube","id":858836387,"language":"en","created_at":"Tue, 15 Jul 2008 09:27:57 +0000"}],"since_id":0,"max_id":100,"results_per_page":1,"page":2,"query":"almost+a+Google%28or+is+it+Twitter%29whack"}'
+                          )
+      next_page = @tweets.get_next_page
+      # It's hard to muck around with objects' .id fields in Ruby, so check other fields instead:
+      assert_equal @next_page_of_tweets[0].created_at, next_page[0].created_at
+      assert_equal @next_page_of_tweets[0].text, next_page[0].text
+    end
+  end
+
 
   # HELPERS
   

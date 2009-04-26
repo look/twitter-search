@@ -1,0 +1,21 @@
+--- !ruby/object:TwitterSearch::Tweets
+results:
+- !ruby/object:TwitterSearch::Tweet
+  text: @rbazinet Sheep are more courteous than that.
+  to_user_id: 14391
+  to_user: rbazinet
+  from_user: HotFusionMan
+  id: 1488483446
+  from_user_id: 3269254
+  iso_language_code: en
+  source: &lt;a href=&quot;http:\/\/twitter.peoplebrowsr.com\/dev&quot;&gt;PeopleBrowsr&lt;\/a&gt;
+  profile_image_url: http:\/\/s3.amazonaws.com\/twitter_production\/profile_images\/79330489\/DSC_0026_normal.JPG
+  created_at: Fri, 10 Apr 2009 04:26:12 +0000
+since_id: 0
+max_id: 1505596243
+refresh_url: ?since_id=1505596243&q=from%3AHotFusionMan+sheep
+results_per_page: 15
+total: 1
+completed_in: 0.097433
+page: 1
+query: from%3AHotFusionMan+sheep

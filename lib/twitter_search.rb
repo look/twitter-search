@@ -38,6 +38,15 @@ module TwitterSearch
     def [](index)
       @results[index]
     end
+
+    def has_next_page?
+      ! @next_page.nil?
+    end
+
+    def get_next_page
+      client = Client.new
+      return client.query( CGI.parse( @next_page[1..-1] ) )
+    end
   end
 
   class Client
@@ -45,9 +54,11 @@ module TwitterSearch
     TWITTER_API_DEFAULT_TIMEOUT = 5
     
     attr_accessor :agent
+    attr_accessor :timeout
     
-    def initialize(agent = 'twitter-search')
+    def initialize(agent = 'twitter-search', timeout = TWITTER_API_DEFAULT_TIMEOUT)
       @agent = agent
+      @timeout = timeout
     end
     
     def headers
@@ -55,14 +66,10 @@ module TwitterSearch
         "User-Agent"   => @agent }
     end
     
-    def timeout
-      TWITTER_API_DEFAULT_TIMEOUT
-    end
-    
     def query(opts = {})
       url       = URI.parse(TWITTER_API_URL)
       url.query = sanitize_query(opts)
-      
+
       req  = Net::HTTP::Get.new(url.path)
       http = Net::HTTP.new(url.host, url.port)
       http.read_timeout = timeout
