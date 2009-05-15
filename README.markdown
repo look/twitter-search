@@ -16,6 +16,8 @@ Set up a TwitterSearch::Client. Name your client (a.k.a. 'user agent') to someth
 
 	@client = TwitterSearch::Client.new 'politweets'
 	
+### Search
+
 Request tweets by calling the query method of your client. It takes either a String or a Hash of arguments.
 
     @tweets = @client.query 'twitter search'
@@ -25,6 +27,16 @@ The String form uses the default Twitter Search behavior, which in this example 
     @tweets = @client.query :q => 'twitter search'
 
 Use the Twitter Search API's query operators with the :q key to access a variety of behavior.
+
+### Trends
+
+Request the current trending topics by calling the trends method of your client. It takes an optional Hash of arguments.
+
+    @trends = @client.trends
+
+The only supported option currently is exclude_hashtags to return trends that are not hashtags only.
+
+    @trends = @client.trends :exclude_hashtags => true
 
 ## Search Operators
 
