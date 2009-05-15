@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/testtask'
  
-test_files_pattern = 'test/twitter_search_test.rb'
+test_files_pattern = 'test/twitter_*_test.rb'
 Rake::TestTask.new do |t|
   t.libs << 'lib'
   t.pattern = test_files_pattern

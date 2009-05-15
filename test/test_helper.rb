@@ -37,4 +37,9 @@ class Test::Unit::TestCase
     end
   end
   
+  def read_yaml(opts = {})
+    return if opts[:file].nil?
+    YAML.load_file File.join(File.dirname(__FILE__), 'yaml', "#{opts[:file]}.yaml") 
+  end
+  
 end

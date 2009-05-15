@@ -3,54 +3,14 @@ require 'net/http'
 require 'json'
 require 'cgi'
 
+require File.join(File.dirname(__FILE__), 'tweets')
+require File.join(File.dirname(__FILE__), 'trends')
+
 module TwitterSearch
 
-  class Tweet
-    VARS = [:text, :from_user, :to_user, :to_user_id, :id, :iso_language_code, :from_user_id, :created_at, :profile_image_url, :source ]
-    attr_reader *VARS
-    attr_reader :language
-    
-    def initialize(opts)
-      @language = opts['iso_language_code']
-      VARS.each { |each| instance_variable_set "@#{each}", opts[each.to_s] }
-    end
-  end
-
-  class Tweets
-    VARS = [:since_id, :max_id, :results_per_page, :page, :query, :next_page]
-    attr_reader *VARS
-
-    include Enumerable
-
-    def initialize(opts)
-      @results = opts['results'].collect { |each| Tweet.new(each) }
-      VARS.each { |each| instance_variable_set "@#{each}", opts[each.to_s] }
-    end
-
-    def each(&block)
-      @results.each(&block)
-    end
-
-    def size
-      @results.size
-    end
-    
-    def [](index)
-      @results[index]
-    end
-
-    def has_next_page?
-      ! @next_page.nil?
-    end
-
-    def get_next_page
-      client = Client.new
-      return client.query( CGI.parse( @next_page[1..-1] ) )
-    end
-  end
-
   class Client
-    TWITTER_API_URL = 'http://search.twitter.com/search.json'
+    TWITTER_SEARCH_API_URL = 'http://search.twitter.com/search.json'
+    TWITTER_TRENDS_API_URL = 'http://search.twitter.com/trends/current.json'
     TWITTER_API_DEFAULT_TIMEOUT = 5
     
     attr_accessor :agent
@@ -67,7 +27,7 @@ module TwitterSearch
     end
     
     def query(opts = {})
-      url       = URI.parse(TWITTER_API_URL)
+      url       = URI.parse(TWITTER_SEARCH_API_URL)
       url.query = sanitize_query(opts)
 
       req  = Net::HTTP::Get.new(url.path)
@@ -78,6 +38,22 @@ module TwitterSearch
         http.get("#{url.path}?#{url.query}", headers)
       }.body
       Tweets.new JSON.parse(json)
+    end
+    
+    def trends(opts = {})
+      url       = URI.parse(TWITTER_TRENDS_API_URL)
+      if opts['exclude_hashtags']
+        url.query = sanitize_query_hash({ :exclude_hashtags => opts['exclude_hashtags'] })
+      end
+
+      req  = Net::HTTP::Get.new(url.path)
+      http = Net::HTTP.new(url.host, url.port)
+      http.read_timeout = timeout
+      
+      json = http.start { |http|
+        http.get("#{url.path}?#{url.query}", headers)
+      }.body
+      Trends.new JSON.parse(json)
     end
 
     private
