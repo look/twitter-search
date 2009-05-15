@@ -14,8 +14,8 @@ Require the gem.
 
 Set up a TwitterSearch::Client. Name your client (a.k.a. 'user agent') to something meaningful, such as your app's name. This helps Twitter Search answer any questions about your use of the API.
 
-	@client = TwitterSearch::Client.new 'politweets'
-	
+    @client = TwitterSearch::Client.new 'politweets'
+
 ### Search
 
 Request tweets by calling the query method of your client. It takes either a String or a Hash of arguments.
@@ -78,9 +78,9 @@ Alter the number of Tweets returned per page with the :rpp key. Stick with 10, 1
 
 * Searching for a positive attitude :) returns tweets containing the text :), =), :D, and :-)
 
-## Authors
+## Contributors
 
-Written by Dustin Sallings (dustin@spy.net), forked by Dan Croak (dcroak@thoughtbot.com).
+Dustin Sallings, Dan Croak, Luke Francl, Matt Sanford, Alejandro Crosa, Danny Burkes, Don Brown, & HotFusionMan.
 
 ## Resources
 

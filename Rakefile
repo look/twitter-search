@@ -1,24 +1,24 @@
 require 'rake'
 require 'rake/testtask'
- 
+
 test_files_pattern = 'test/twitter_*_test.rb'
 Rake::TestTask.new do |t|
   t.libs << 'lib'
   t.pattern = test_files_pattern
   t.verbose = false
 end
- 
+
 desc "Run the test suite"
 task :default => :test
- 
+
 gem_spec = Gem::Specification.new do |gem_spec|
   gem_spec.name        = "twitter-search"
-  gem_spec.version     = "0.5.2"
+  gem_spec.version     = "0.5.3"
   gem_spec.summary     = "Ruby client for Twitter Search."
   gem_spec.email       = "dcroak@thoughtbot.com"
   gem_spec.homepage    = "http://github.com/dancroak/twitter-search"
   gem_spec.description = "Ruby client for Twitter Search."
-  gem_spec.authors     = ["Dustin Sallings", "Dan Croak"]
+  gem_spec.authors     = ["Dustin Sallings", "Dan Croak", "Luke Francl", "Matt Sanford", "Alejandro Crosa", "Danny Burkes", "Don Brown", "HotFusionMan"]
   gem_spec.files       = FileList["[A-Z]*", "{generators,lib,shoulda_macros,rails}/**/*"]
   gem_spec.add_dependency('json', '>= 1.1.2')
 end
@@ -36,7 +36,7 @@ require 'yaml'
 
 namespace :yaml do
   desc "Write Twitter Search results to yaml file so API is not hit every test."
-  task :write do    
+  task :write do
     write_yaml :tweets => 'Obama',                                     :file => 'obama'
     write_yaml :tweets => 'twitter search',                            :file => 'twitter_search'
     write_yaml :tweets => {:q => 'twitter search'},                    :file => 'twitter_search_and'
