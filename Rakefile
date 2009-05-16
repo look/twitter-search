@@ -13,13 +13,13 @@ task :default => :test
 
 gem_spec = Gem::Specification.new do |gem_spec|
   gem_spec.name        = "twitter-search"
-  gem_spec.version     = "0.5.3"
+  gem_spec.version     = "0.5.4"
   gem_spec.summary     = "Ruby client for Twitter Search."
   gem_spec.email       = "dcroak@thoughtbot.com"
   gem_spec.homepage    = "http://github.com/dancroak/twitter-search"
   gem_spec.description = "Ruby client for Twitter Search."
   gem_spec.authors     = ["Dustin Sallings", "Dan Croak", "Luke Francl", "Matt Sanford", "Alejandro Crosa", "Danny Burkes", "Don Brown", "HotFusionMan"]
-  gem_spec.files       = FileList["[A-Z]*", "{generators,lib,shoulda_macros,rails}/**/*"]
+  gem_spec.files       = FileList["[A-Z]*", "{lib,shoulda_macros}/**/*"]
   gem_spec.add_dependency('json', '>= 1.1.2')
 end
 
