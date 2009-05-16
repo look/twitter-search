@@ -9,7 +9,7 @@ class TwitterSearchTrendsTest < Test::Unit::TestCase # :nodoc:
     setup do
       @trends = read_yaml :file => 'trends'
     end
-    
+
     should 'find a single trend' do
       assert_equal 1, @trends.size
     end
