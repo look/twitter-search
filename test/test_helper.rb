@@ -32,7 +32,7 @@ class Test::Unit::TestCase
 
   def parse_json(opts = {})
     raise ArgumentError if opts[:file].nil?
-    json = IO.read(File.here / 'json' / "#{opts[:file]}.json").body
+    json = IO.read(File.here / 'json' / "#{opts[:file]}.json")
     JSON.parse(json)
   end
 

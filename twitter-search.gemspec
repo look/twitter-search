@@ -16,7 +16,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-05-15 00:00:00 -04:00
+date: 2009-05-16 00:00:00 -04:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -45,6 +45,7 @@ files:
 - lib/trends.rb
 - lib/tweets.rb
 - lib/twitter_search.rb
+- shoulda_macros/twitter_search.rb
 has_rdoc: true
 homepage: http://github.com/dancroak/twitter-search
 licenses: []
