@@ -1,11 +1,10 @@
-# coding: utf-8
-
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 gem('fakeweb', '>=1.2.0')
 require 'fakeweb'
 
-FakeWeb.allow_net_connect = false # an insurance policy against hitting http://twitter.com
+# an insurance policy against hitting http://twitter.com
+FakeWeb.allow_net_connect = false
 
 class TwitterSearchTest < Test::Unit::TestCase # :nodoc:
 
@@ -25,9 +24,9 @@ class TwitterSearchTest < Test::Unit::TestCase # :nodoc:
     setup do
       @tweets = read_yaml :file => 'twitter_search'
     end
-    
+
     should_have_default_search_behaviors
-    
+
     should 'find tweets containing both "twitter" and "search"' do
       assert @tweets.all?{ |t| t.text =~ /twitter/i && t.text =~ /search/i }
     end
@@ -37,9 +36,9 @@ class TwitterSearchTest < Test::Unit::TestCase # :nodoc:
     setup do
       @tweets = read_yaml :file => 'twitter_search_and'
     end
-    
+
     should_have_default_search_behaviors
-    
+
     should 'find tweets containing both "twitter" and "search"' do
       assert @tweets.all?{ |t| t.text =~ /twitter/i && t.text =~ /search/i }
     end

@@ -72,5 +72,4 @@ module TwitterSearch
       end
 
   end
-
 end
