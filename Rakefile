@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/testtask'
 
-test_files_pattern = 'test/twitter_*_test.rb'
+test_files_pattern = 'test/*_test.rb'
 Rake::TestTask.new do |t|
   t.libs << 'lib'
   t.pattern = test_files_pattern
@@ -64,7 +64,7 @@ end
 def write_yaml(opts = {})
   @client = TwitterSearch::Client.new 'twitter-search'
   tweets  = @client.query(opts[:tweets])
-  File.open(File.join(File.dirname(__FILE__), 'test', 'yaml', "#{opts[:file]}.yaml"), 'w+') do |file| 
+  File.open(File.join(File.dirname(__FILE__), 'test', 'yaml', "#{opts[:file]}.yaml"), 'w+') do |file|
     file.puts tweets.to_yaml
   end
 end
