@@ -73,6 +73,6 @@ rubyforge_project:
 rubygems_version: 1.3.3
 signing_key: 
 specification_version: 3
-summary: Ruby client for Twitter Search.
+summary: Ruby client for Twitter Search. Includes trends.
 test_files: []
 
