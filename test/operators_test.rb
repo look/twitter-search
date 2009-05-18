@@ -86,24 +86,20 @@ class OperatorsTest < Test::Unit::TestCase # :nodoc:
   end
 
   context "@client.query :q => '\"happy hour\" near:\"san francisco\"'" do
-    setup do
-      @tweets = read_yaml :file => 'happy_hour_near_sf'
-    end
-
-    # Twitter Search API requires the geocode parameter for location searching
-    should 'not find tweets using the near operator' do
-      assert ! @tweets.any?
+    should 'raise SearchOperatorError' do
+      assert_raise TwitterSearch::SearchOperatorError do
+        client = TwitterSearch::Client.new
+        client.query '"happy hour" near:"san francisco"'
+      end
     end
   end
 
   context "@client.query :q => 'near:NYC within:15mi'" do
-    setup do
-      @tweets = read_yaml :file => 'within_15mi_nyc'
-    end
-
-    # Twitter Search API requires the geocode parameter for location searching
-    should 'not find tweets using the near operator' do
-      assert ! @tweets.any?
+    should 'raise SearchOperatorError' do
+      assert_raise TwitterSearch::SearchOperatorError do
+        client = TwitterSearch::Client.new
+        client.query 'near:NYC within:15mi'
+      end
     end
   end
 

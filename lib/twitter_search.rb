@@ -7,6 +7,9 @@ require File.join(File.dirname(__FILE__), 'tweets')
 require File.join(File.dirname(__FILE__), 'trends')
 
 module TwitterSearch
+  class SearchOperatorError < ArgumentError
+  end
+
   class Client
     TWITTER_SEARCH_API_URL = 'http://search.twitter.com/search.json'
     TWITTER_TRENDS_API_URL = 'http://search.twitter.com/trends/current.json'
@@ -28,6 +31,8 @@ module TwitterSearch
     def query(opts = {})
       url       = URI.parse(TWITTER_SEARCH_API_URL)
       url.query = sanitize_query(opts)
+
+      ensure_no_location_operators(url.query)
 
       req  = Net::HTTP::Get.new(url.path)
       http = Net::HTTP.new(url.host, url.port)
@@ -69,6 +74,14 @@ module TwitterSearch
         query_hash.collect { |key, value|
           "#{CGI.escape(key.to_s)}=#{CGI.escape(value.to_s)}"
         }.join('&')
+      end
+
+      def ensure_no_location_operators(query_string)
+        if query_string.include?("near%3A") ||
+           query_string.include?("within%3A")
+          raise TwitterSearch::SearchOperatorError,
+            "near: and within: are available from the Twitter Search web interface, but not the API. The API requires the geocode parameter. See dancroak/twitter-search README."
+        end
       end
 
   end
