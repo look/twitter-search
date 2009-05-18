@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: twitter-search
 version: !ruby/object:Gem::Version 
-  version: 0.5.4
+  version: 0.5.5
 platform: ruby
 authors: 
 - Dustin Sallings
@@ -16,7 +16,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-05-16 00:00:00 -04:00
+date: 2009-05-18 00:00:00 -04:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
