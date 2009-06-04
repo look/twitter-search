@@ -42,11 +42,8 @@ files:
 - Rakefile
 - README.markdown
 - TODO.markdown
-<<<<<<< HEAD:twitter-search.gemspec
-=======
 - lib/trends.rb
 - lib/tweets.rb
->>>>>>> 655457d47e6e73971d5d7aec21771ecab3516351:twitter-search.gemspec
 - lib/twitter_search.rb
 - shoulda_macros/twitter_search.rb
 has_rdoc: true
