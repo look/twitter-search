@@ -9,6 +9,8 @@ require File.join(File.dirname(__FILE__), 'trends')
 module TwitterSearch
   class SearchOperatorError < ArgumentError
   end
+  class SearchServerError < RuntimeError
+  end
 
   class Client
     TWITTER_SEARCH_API_URL = 'http://search.twitter.com/search.json'
@@ -38,9 +40,16 @@ module TwitterSearch
       http = Net::HTTP.new(url.host, url.port)
       http.read_timeout = timeout
 
-      json = http.start { |http|
+      res = http.start { |http|
         http.get("#{url.path}?#{url.query}", headers)
-      }.body
+      }
+      
+      if res.code == '404'
+        raise TwitterSearch::SearchServerError, "Twitter responded with a 404 for your query. It is likely too complicated to process."
+      end
+      
+      json = res.body
+      
       Tweets.new JSON.parse(json)
     end
 
@@ -57,6 +66,7 @@ module TwitterSearch
       json = http.start { |http|
         http.get("#{url.path}?#{url.query}", headers)
       }.body
+      
       Trends.new JSON.parse(json)
     end
 
