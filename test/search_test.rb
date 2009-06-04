@@ -36,4 +36,18 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
       assert @tweets.all?{ |t| t.text =~ /twitter/i && t.text =~ /search/i }
     end
   end
+  
+  context "a complicated search that results in a 404" do
+    setup do
+      uri = "http://search.twitter.com/search.json?q=rails+-from%3Adhh+from%3Alof&since_id=1791298088"
+      FakeWeb.register_uri(uri, :response => File.here / 'responses' / 'complicated_search_404', :status => [404, "Not Found"])
+    end
+    
+    should "raise a SearchServerError" do
+      assert_raise TwitterSearch::SearchServerError do
+        client = TwitterSearch::Client.new
+        client.query :q => 'rails -from:dhh from:lof', :since_id => 1791298088
+      end
+    end
+  end
 end

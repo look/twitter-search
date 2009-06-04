@@ -13,7 +13,7 @@ end
 require 'test/unit'
 require 'rubygems'
 require 'shoulda'
-require 'redgreen' rescue LoadError
+begin require 'redgreen'; rescue LoadError; end
 require 'yaml'
 require File.here / '..' / 'lib' / 'twitter_search'
 require File.here / '..' / 'shoulda_macros' / 'twitter_search'
