@@ -70,7 +70,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: 
-rubygems_version: 1.3.3
+rubygems_version: 1.3.4
 signing_key: 
 specification_version: 3
 summary: Ruby client for Twitter Search. Includes trends.
