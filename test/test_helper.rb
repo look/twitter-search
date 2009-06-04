@@ -1,40 +1,62 @@
-require File.expand_path('../lib/twitter_search', File.dirname(__FILE__))
+class String
+  def /(other)
+    File.join(self, other)
+  end
+end
+
+class File
+  def self.here
+    dirname(__FILE__)
+  end
+end
+
 require 'test/unit'
 require 'rubygems'
 require 'shoulda'
+require 'redgreen' rescue LoadError
 require 'yaml'
+require File.here / '..' / 'lib' / 'twitter_search'
+require File.here / '..' / 'shoulda_macros' / 'twitter_search'
+
+gem('fakeweb', '>=1.2.0')
+require 'fakeweb'
+
+# an insurance policy against hitting http://twitter.com
+FakeWeb.allow_net_connect = false
 
 class Test::Unit::TestCase
-  
-  def self.should_have_default_search_behaviors
-    should_find_tweets
-    should_have_text_for_all_tweets
-    should_return_page 1
-    should_return_tweets_in_sets_of 15
+  def read_yaml(opts = {})
+    raise ArgumentError if opts[:file].nil?
+    YAML.load_file(File.here / 'yaml' / "#{opts[:file]}.yaml")
   end
-  
-  def self.should_find_tweets
-    should 'find tweets' do
-      assert @tweets.any?
-    end
+
+  def parse_json(opts = {})
+    raise ArgumentError if opts[:file].nil?
+    json = IO.read(File.here / 'json' / "#{opts[:file]}.json")
+    JSON.parse(json)
   end
-  
-  def self.should_have_text_for_all_tweets
-    should 'have text for all tweets' do
-      assert @tweets.all? { |tweet| tweet.text.size > 0 }
-    end
+
+  def convert_date(date)
+    date = date.split(' ')
+    DateTime.new(date[3].to_i, convert_month(date[2]), date[1].to_i)
   end
-  
-  def self.should_return_page(number)
-    should "return page #{number}" do
-      assert_equal number, @tweets.page
-    end
+
+  def convert_month(str)
+    months = { 'Jan' => 1, 'Feb' => 2, 'Mar' => 3, 'Apr' => 4,
+               'May' => 5, 'Jun' => 6, 'Jul' => 7, 'Aug' => 8,
+               'Sep' => 9, 'Oct' => 10, 'Nov' => 11, 'Dec' => 12 }
+    months[str]
   end
-  
-  def self.should_return_tweets_in_sets_of(number)
-    should "return tweets in sets of #{number}" do
-      assert_equal number, @tweets.results_per_page
-    end
+
+  def positive_attitude?(string)
+    [":)", "=)", ":-)", ":D"].any? { |emoticon| string.include?(emoticon) }
   end
-  
+
+  def negative_attitude?(string)
+    [":(", "=(", ":-(", ":P"].any? { |emoticon| string.include?(emoticon) }
+  end
+
+  def hyperlinks?(str)
+    str.include?('http://') || str.include?('https://')
+  end
 end

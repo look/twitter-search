@@ -14,8 +14,10 @@ Require the gem.
 
 Set up a TwitterSearch::Client. Name your client (a.k.a. 'user agent') to something meaningful, such as your app's name. This helps Twitter Search answer any questions about your use of the API.
 
-	@client = TwitterSearch::Client.new 'politweets'
-	
+    @client = TwitterSearch::Client.new 'politweets'
+
+### Search
+
 Request tweets by calling the query method of your client. It takes either a String or a Hash of arguments.
 
     @tweets = @client.query 'twitter search'
@@ -25,6 +27,16 @@ The String form uses the default Twitter Search behavior, which in this example 
     @tweets = @client.query :q => 'twitter search'
 
 Use the Twitter Search API's query operators with the :q key to access a variety of behavior.
+
+### Trends
+
+Request the current trending topics by calling the trends method of your client. It takes an optional Hash of arguments.
+
+    @trends = @client.trends
+
+The only supported option currently is exclude_hashtags to return trends that are not hashtags only.
+
+    @trends = @client.trends :exclude_hashtags => true
 
 ## Search Operators
 
@@ -66,13 +78,13 @@ Alter the number of Tweets returned per page with the :rpp key. Stick with 10, 1
 
 * Searching for a positive attitude :) returns tweets containing the text :), =), :D, and :-)
 
-## Authors
+## Contributors
 
-Written by Dustin Sallings (dustin@spy.net), forked by Dan Croak (dcroak@thoughtbot.com).
+Dustin Sallings, Dan Croak, Luke Francl, Matt Sanford, Alejandro Crosa, Danny Burkes, Don Brown, & HotFusionMan.
 
 ## Resources
 
-* [Official Twitter Search API](http://search.twitter.com/api)
+* [Official Twitter Search API](http://apiwiki.twitter.com/Twitter-API-Documentation)
 
 ## License
 

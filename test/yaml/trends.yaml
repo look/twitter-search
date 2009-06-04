@@ -1,0 +1,7 @@
+--- !ruby/object:TwitterSearch::Trends 
+as_of: 1242339160
+trends:
+  "2009-05-14 22:12:40":
+- !ruby/object:TwitterSearch::Trend
+     name: trend1
+     query: trend1
