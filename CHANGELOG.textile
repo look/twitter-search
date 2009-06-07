@@ -1,3 +1,8 @@
+h2. 0.5.6 (June 6, 2009)
+
+* When Twitter returns a 404, raise a TwitterSearch::SearchServerError instead
+of a JSON parse error. (Luke Francl)
+
 h2. 0.5.5 (May 18, 2009)
 
 * raise error when query contains :near or :within:. (Dan Croak)
