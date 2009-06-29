@@ -33,7 +33,7 @@ class PaginationTest < Test::Unit::TestCase # :nodoc:
 
       FakeWeb.register_uri( :get,
                             "#{TwitterSearch::Client::TWITTER_SEARCH_API_URL}?max_id=100&q=almost+a+Google%28or+is+it+Twitter%29whack&rpp=1&page=2",
-                            :string => '{"results":[{"text":"Boston Celtics-Los Angeles Lakers, Halftime http://tinyurl.com/673s24","from_user":"nbatube","id":858836387,"language":"en","created_at":"Tue, 15 Jul 2008 09:27:57 +0000"}],"since_id":0,"max_id":100,"results_per_page":1,"page":2,"query":"almost+a+Google%28or+is+it+Twitter%29whack"}'
+                            :body => '{"results":[{"text":"Boston Celtics-Los Angeles Lakers, Halftime http://tinyurl.com/673s24","from_user":"nbatube","id":858836387,"language":"en","created_at":"Tue, 15 Jul 2008 09:27:57 +0000"}],"since_id":0,"max_id":100,"results_per_page":1,"page":2,"query":"almost+a+Google%28or+is+it+Twitter%29whack"}'
                           )
       next_page = @page_one.get_next_page
       assert_equal @page_two[0].created_at, next_page[0].created_at
