@@ -40,7 +40,7 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
   context "a complicated search that results in a 404" do
     setup do
       uri = "http://search.twitter.com/search.json?q=rails+-from%3Adhh+from%3Alof&since_id=1791298088"
-      FakeWeb.register_uri(uri, :response => File.here / 'responses' / 'complicated_search_404', :status => [404, "Not Found"])
+      FakeWeb.register_uri(:get, uri, :response => File.here / 'responses' / 'complicated_search_404', :status => [404, "Not Found"])
     end
     
     should "raise a SearchServerError" do
