@@ -1,12 +1,13 @@
 --- !ruby/object:Gem::Specification 
 name: twitter-search
 version: !ruby/object:Gem::Version 
-  version: 0.5.7
+  version: 0.5.8
 platform: ruby
 authors: 
 - Dustin Sallings
 - Dan Croak
 - Luke Francl
+- Matt Jankowski
 - Matt Sanford
 - Alejandro Crosa
 - Danny Burkes

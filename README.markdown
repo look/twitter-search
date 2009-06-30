@@ -78,6 +78,27 @@ Alter the number of Tweets returned per page with the :rpp key. Stick with 10, 1
 
 * Searching for a positive attitude :) returns tweets containing the text :), =), :D, and :-)
 
+## Contributing
+
+Get the source and clone it.
+
+The test suite uses JSON fixtures which were created from cURL. Usage example:
+
+    query   = { :q => 'rails training' }
+    fake_query(query, 'rails_training.json')
+    @tweets = TwitterSearch::Client.new.query(query)
+
+Then you assert any necessary expectations on @tweets.
+
+To create your own JSON fixtures, first get the CGI escaped querystring in irb:
+
+    require 'lib/twitter_search'
+    TwitterSearch::Client.new.sanitize_query({ :q => 'rails training' })
+
+Then take the output and append it to a simple cURL, sending the output into your new file:
+
+    curl -i 'http://search.twitter.com/search.json?q=rails+training' > test/json/rails_training.json
+
 ## Contributors
 
 Dustin Sallings, Dan Croak, Luke Francl, Matt Jankowski, Matt Sanford, Alejandro Crosa, Danny Burkes, Don Brown, & HotFusionMan.
