@@ -51,11 +51,11 @@ module TwitterSearch
       json = res.body
 
       parsed_json = JSON.parse(json)
-  
-      unless parsed_json['results'].respond_to?(:collect)
-        raise TwitterSearch::SearchServerError, "Twitter responded with a body that could not be parsed."
+      
+      if parsed_json['error']
+        raise TwitterSearch::SearchServerError, "Twitter responded with an error body: #{parsed_json['error']}"
       end
-
+  
       Tweets.new parsed_json
     end
 
