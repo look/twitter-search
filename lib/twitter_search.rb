@@ -47,10 +47,16 @@ module TwitterSearch
       if res.code == '404'
         raise TwitterSearch::SearchServerError, "Twitter responded with a 404 for your query. It is likely too complicated to process."
       end
-      
+
       json = res.body
-      
-      Tweets.new JSON.parse(json)
+
+      parsed_json = JSON.parse(json)
+  
+      unless parsed_json['results'].respond_to?(:collect)
+        raise TwitterSearch::SearchServerError, "Twitter responded with a body that could not be parsed."
+      end
+
+      Tweets.new parsed_json
     end
 
     def trends(opts = {})

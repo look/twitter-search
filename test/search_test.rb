@@ -50,4 +50,18 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
       end
     end
   end
+
+  context "a search that returns a 200 but an unparsable body" do
+    setup do
+      uri = "http://search.twitter.com/search.json?rpp=100&q=ftc&since_id=2147483647&page=16"
+      FakeWeb.register_uri(:get, uri, :response => File.here / 'responses' / 'error_page_parameter_403', :status => [403, "Forbidden"])
+    end
+
+    should "raise a SearchServerError" do
+      assert_raise TwitterSearch::SearchServerError do
+        client = TwitterSearch::Client.new
+        client.query :q => 'ftc', :rpp => '100', :since_id => '2147483647', :page => '16'
+      end
+    end
+  end
 end
