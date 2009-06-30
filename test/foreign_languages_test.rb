@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class ForeignLanguagesTest < Test::Unit::TestCase # :nodoc:
-  context "client.query(:q => 'congratulations', :lang => 'en')" do
+  context "english" do
     setup do
       query   = { :q => 'congratulations', :lang => 'en' }
       fake_query(query, 'english.json')

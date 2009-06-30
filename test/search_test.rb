@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class SearchTest < Test::Unit::TestCase # :nodoc:
-  context "client.query('Obama')" do
+  context "single word" do
     setup do
       fake_query('Obama', 'obama.json')
       @tweets = TwitterSearch::Client.new.query('Obama')
@@ -14,7 +14,7 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "client.query('twitter search')" do
+  context "two words" do
     setup do
       fake_query('twitter search', 'twitter_search.json')
       @tweets = TwitterSearch::Client.new.query('twitter search')
@@ -27,7 +27,7 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "client.query(:q => 'twitter search')" do
+  context "two words with :q option" do
     setup do
       fake_query({ :q => 'twitter search' }, 'twitter_search.json')
       @tweets = TwitterSearch::Client.new.query(:q => 'twitter search')
@@ -40,7 +40,7 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "a complicated search that results in a 404" do
+  context "response is a 404" do
     setup do
       uri = "http://search.twitter.com/search.json?q=rails+-from%3Adhh+from%3Alof&since_id=1791298088"
       FakeWeb.register_uri(:get, uri,
@@ -56,7 +56,7 @@ class SearchTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "a search that returns a 200 but an unparsable body" do
+  context "response is 200 but an unparsable body" do
     setup do
       uri = "http://search.twitter.com/search.json?rpp=100&q=ftc&since_id=2147483647&page=16"
       FakeWeb.register_uri(:get, uri,

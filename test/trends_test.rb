@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class TrendsTest < Test::Unit::TestCase # :nodoc:
-  context "@client.trends" do
+  context "trends" do
     setup do
       @trends = parse_json :file => 'trends'
     end

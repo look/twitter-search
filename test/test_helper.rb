@@ -25,11 +25,6 @@ require 'fakeweb'
 FakeWeb.allow_net_connect = false
 
 class Test::Unit::TestCase
-  def read_yaml(opts = {})
-    raise ArgumentError if opts[:file].nil?
-    YAML.load_file(File.here / 'yaml' / "#{opts[:file]}.yaml")
-  end
-
   def parse_json(opts = {})
     raise ArgumentError if opts[:file].nil?
     json = IO.read(File.here / 'json' / "#{opts[:file]}.json")
@@ -38,7 +33,7 @@ class Test::Unit::TestCase
 
   def fake_query(query, file_name)
     sanitized_query = TwitterSearch::Client.new.sanitize_query(query)
-    uri = "http://search.twitter.com/search.json?#{sanitized_query}"
+    uri = "#{TwitterSearch::Client::TWITTER_SEARCH_API_URL}?#{sanitized_query}"
     FakeWeb.register_uri(:get, uri, :response => File.here / 'json' / file_name)
   end
 
@@ -55,11 +50,13 @@ class Test::Unit::TestCase
   end
 
   def positive_attitude?(string)
-    [":)", "=)", ":-)", ":D"].any? { |emoticon| string.include?(emoticon) }
+    emoticons = [":)", "=)", ":-)", ":D", ": )"]
+    emoticons.any? { |emoticon| string.include?(emoticon) }
   end
 
   def negative_attitude?(string)
-    [":(", "=(", ":-(", ":P"].any? { |emoticon| string.include?(emoticon) }
+    emoticons = [":(", "=(", ":-(", ":P", ": ("]
+    emoticons.any? { |emoticon| string.include?(emoticon) }
   end
 
   def hyperlinks?(string)

@@ -1,9 +1,11 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class PaginationTest < Test::Unit::TestCase # :nodoc:
-  context "@client.query :q => 'Boston Celtics', :rpp => '30'" do
+  context "results per page" do
     setup do
-      @tweets = read_yaml :file => 'results_per_page'
+      query   = { :q => 'Boston Celtics', :rpp => '30' }
+      fake_query(query, 'results_per_page.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_find_tweets
@@ -14,7 +16,9 @@ class PaginationTest < Test::Unit::TestCase # :nodoc:
 
   context "@client.query :q => 'a Google(or Twitter)whack', :rpp => '2'" do
     setup do
-      @tweets = read_yaml :file => 'only_one_result'
+      query   = { :q => 'beginning class is in-depth ruby', :rpp => '2' }
+      fake_query(query, 'only_one_result.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should 'not be able to get next page of @tweets' do
@@ -22,19 +26,25 @@ class PaginationTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "@client.query :q => 'almost Google(or Twitter)whack', :rpp => '1'" do
+  context "get next page" do
     setup do
-      @page_one = read_yaml :file => 'only_two_results'
-      @page_two = read_yaml :file => 'only_two_results_page_2'
+      query     = { :q => 'thoughtbot', :rpp => '1' }
+      fake_query(query, 'page_one.json')
+      @page_one = TwitterSearch::Client.new.query(query)
+
+      query     = { :q => 'thoughtbot', :rpp => '1', :page => '2' }
+      fake_query(query, 'page_two.json')
+      @page_two = TwitterSearch::Client.new.query(query)
     end
 
     should 'be able to get next page of @tweets' do
       assert @page_one.has_next_page?
 
-      FakeWeb.register_uri( :get,
-                            "#{TwitterSearch::Client::TWITTER_SEARCH_API_URL}?max_id=100&q=almost+a+Google%28or+is+it+Twitter%29whack&rpp=1&page=2",
-                            :body => '{"results":[{"text":"Boston Celtics-Los Angeles Lakers, Halftime http://tinyurl.com/673s24","from_user":"nbatube","id":858836387,"language":"en","created_at":"Tue, 15 Jul 2008 09:27:57 +0000"}],"since_id":0,"max_id":100,"results_per_page":1,"page":2,"query":"almost+a+Google%28or+is+it+Twitter%29whack"}'
-                          )
+      query_string = "max_id=2407099995&q=thoughtbot&rpp=1&page=2"
+      uri = "#{TwitterSearch::Client::TWITTER_SEARCH_API_URL}?#{query_string}"
+      FakeWeb.register_uri(:get, uri,
+        :response => File.here / 'json' / "page_two.json")
+
       next_page = @page_one.get_next_page
       assert_equal @page_two[0].created_at, next_page[0].created_at
       assert_equal @page_two[0].text,       next_page[0].text
