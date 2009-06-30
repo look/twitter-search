@@ -36,14 +36,20 @@ class Test::Unit::TestCase
     JSON.parse(json)
   end
 
+  def fake_query(query, file_name)
+    sanitized_query = TwitterSearch::Client.new.sanitize_query(query)
+    uri = "http://search.twitter.com/search.json?#{sanitized_query}"
+    FakeWeb.register_uri(:get, uri, :response => File.here / 'json' / file_name)
+  end
+
   def convert_date(date)
     date = date.split(' ')
     DateTime.new(date[3].to_i, convert_month(date[2]), date[1].to_i)
   end
 
   def convert_month(str)
-    months = { 'Jan' => 1, 'Feb' => 2, 'Mar' => 3, 'Apr' => 4,
-               'May' => 5, 'Jun' => 6, 'Jul' => 7, 'Aug' => 8,
+    months = { 'Jan' => 1, 'Feb' => 2,  'Mar' => 3,  'Apr' => 4,
+               'May' => 5, 'Jun' => 6,  'Jul' => 7,  'Aug' => 8,
                'Sep' => 9, 'Oct' => 10, 'Nov' => 11, 'Dec' => 12 }
     months[str]
   end
@@ -56,7 +62,7 @@ class Test::Unit::TestCase
     [":(", "=(", ":-(", ":P"].any? { |emoticon| string.include?(emoticon) }
   end
 
-  def hyperlinks?(str)
-    str.include?('http://') || str.include?('https://')
+  def hyperlinks?(string)
+    ["http://", "https://"].any? { |protocol| string.include?(protocol) }
   end
 end

@@ -1,6 +1,6 @@
 module TwitterSearch
   class Trend
-    VARS = [ :query, :name ]
+    VARS = [:query, :name]
     attr_reader *VARS
     attr_reader :exclude_hashtags
 
@@ -10,27 +10,15 @@ module TwitterSearch
     end
   end
 
-  class Trends
+  class Trends < Array
     VARS = [:date]
     attr_reader *VARS
 
-    include Enumerable
-
     def initialize(opts)
-      @trends = opts['trends'].values.first.collect { |each| Trend.new(each) }
+      trends = opts('trends').delete
+      trends = trends.values.first.collect { |each| Trend.new(each) }
+      super(trends)
       VARS.each { |each| instance_variable_set "@#{each}", opts[each.to_s] }
-    end
-
-    def each(&block)
-      @trends.each(&block)
-    end
-
-    def size
-      @trends.size
-    end
-
-    def [](index)
-      @trends[index]
     end
   end
 end
