@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: twitter-search
 version: !ruby/object:Gem::Version 
-  version: 0.5.6
+  version: 0.5.7
 platform: ruby
 authors: 
 - Dustin Sallings
@@ -16,7 +16,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-06-06 00:00:00 -04:00
+date: 2009-06-30 00:00:00 -04:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -70,7 +70,7 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: 
-rubygems_version: 1.3.3
+rubygems_version: 1.3.4
 signing_key: 
 specification_version: 3
 summary: Ruby client for Twitter Search. Includes trends.
