@@ -21,7 +21,7 @@ module TwitterSearch
     attr_accessor :timeout
 
     def initialize(agent = 'twitter-search', timeout = DEFAULT_TIMEOUT)
-      @agent = agent
+      @agent   = agent
       @timeout = timeout
     end
 
@@ -43,14 +43,21 @@ module TwitterSearch
       res = http.start { |http|
         http.get("#{url.path}?#{url.query}", headers)
       }
-      
+
       if res.code == '404'
-        raise TwitterSearch::SearchServerError, "Twitter responded with a 404 for your query. It is likely too complicated to process."
+        raise TwitterSearch::SearchServerError,
+              "Twitter responded with a 404 for your query."
       end
-      
-      json = res.body
-      
-      Tweets.new JSON.parse(json)
+
+      json        = res.body
+      parsed_json = JSON.parse(json)
+
+      if parsed_json['error']
+        raise TwitterSearch::SearchServerError,
+              "Twitter responded with an error body: #{parsed_json['error']}"
+      end
+
+      Tweets.new parsed_json
     end
 
     def trends(opts = {})
@@ -66,33 +73,31 @@ module TwitterSearch
       json = http.start { |http|
         http.get("#{url.path}?#{url.query}", headers)
       }.body
-      
+
       Trends.new JSON.parse(json)
     end
 
-    private
-
-      def sanitize_query(opts)
-        if opts.is_a? String
-          "q=#{CGI.escape(opts)}"
-        elsif opts.is_a? Hash
-          "#{sanitize_query_hash(opts)}"
-        end
+    def sanitize_query(opts)
+      if opts.is_a? String
+        "q=#{CGI.escape(opts)}"
+      elsif opts.is_a? Hash
+        "#{sanitize_query_hash(opts)}"
       end
+    end
 
-      def sanitize_query_hash(query_hash)
-        query_hash.collect { |key, value|
-          "#{CGI.escape(key.to_s)}=#{CGI.escape(value.to_s)}"
-        }.join('&')
-      end
+    def sanitize_query_hash(query_hash)
+      query_hash.collect { |key, value|
+        "#{CGI.escape(key.to_s)}=#{CGI.escape(value.to_s)}"
+      }.join('&')
+    end
 
-      def ensure_no_location_operators(query_string)
-        if query_string.include?("near%3A") ||
-           query_string.include?("within%3A")
-          raise TwitterSearch::SearchOperatorError,
-            "near: and within: are available from the Twitter Search web interface, but not the API. The API requires the geocode parameter. See dancroak/twitter-search README."
-        end
+    def ensure_no_location_operators(query_string)
+      if query_string.include?("near%3A") ||
+         query_string.include?("within%3A")
+        raise TwitterSearch::SearchOperatorError,
+          "near: and within: are available from the Twitter Search web interface, but not the API. The API requires the geocode parameter. See dancroak/twitter-search README."
       end
+    end
 
   end
 end

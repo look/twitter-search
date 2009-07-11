@@ -1,12 +1,17 @@
 --- !ruby/object:Gem::Specification 
 name: twitter-search
 version: !ruby/object:Gem::Version 
+<<<<<<< HEAD:twitter-search.gemspec
   version: 0.5.6
+=======
+  version: 0.5.8
+>>>>>>> cd60ddc05170b166a43cee4eed1d3af140ffec52:twitter-search.gemspec
 platform: ruby
 authors: 
 - Dustin Sallings
 - Dan Croak
 - Luke Francl
+- Matt Jankowski
 - Matt Sanford
 - Alejandro Crosa
 - Danny Burkes
@@ -16,7 +21,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-05-18 00:00:00 -04:00
+date: 2009-06-30 00:00:00 -04:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 

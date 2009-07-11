@@ -10,27 +10,15 @@ module TwitterSearch
     end
   end
 
-  class Tweets
+  class Tweets < Array
     VARS = [:since_id, :max_id, :results_per_page, :page, :query, :next_page]
     attr_reader *VARS
 
-    include Enumerable
-
     def initialize(opts)
-      @results = opts['results'].collect { |each| Tweet.new(each) }
+      results = opts.delete('results') || []
+      results.collect! { |each| Tweet.new(each) }
+      super(results)
       VARS.each { |each| instance_variable_set "@#{each}", opts[each.to_s] }
-    end
-
-    def each(&block)
-      @results.each(&block)
-    end
-
-    def size
-      @results.size
-    end
-
-    def [](index)
-      @results[index]
     end
 
     def has_next_page?

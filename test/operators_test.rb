@@ -1,91 +1,120 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class OperatorsTest < Test::Unit::TestCase # :nodoc:
-  context '@client.query :q => \'"happy hour"\'' do
+  context "quoted phrase" do
     setup do
-      @tweets = read_yaml :file => 'happy_hour_exact'
+      query   = { :q => '"happy hour"' }
+      fake_query(query, 'happy_hour_exact.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing the exact phrase "happy hour"' do
-      assert @tweets.all?{ |t| t.text =~ /happy hour/i }
+      @tweets.each do |tweet|
+        assert_match /happy hour/i, tweet.text
+      end
     end
   end
 
-  context "@client.query :q => 'obama OR hillary'" do
+  context "OR" do
     setup do
-      @tweets = read_yaml :file => 'obama_or_hillary'
+      query   = { :q => 'obama OR hillary' }
+      fake_query(query, 'obama_or_hillary.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing either "obama" or "hillary" (or both)' do
-      assert @tweets.all?{ |t| t.text =~ /obama/i || t.text =~ /hillary/i }
+      @tweets.each do |tweet|
+        assert_match /obama|hillary/i, tweet.text
+      end
     end
   end
 
-  context "@client.query :q => 'beer -root'" do
+  context "minus" do
     setup do
-      @tweets = read_yaml :file => 'beer_minus_root'
+      query   = { :q => 'beer -root' }
+      fake_query(query, 'beer_minus_root.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing "beer" but not "root"' do
-      assert @tweets.all?{ |t| t.text =~ /beer/i || t.text !~ /root/i }
+      assert @tweets.all? { |tweet|
+        tweet.text =~ /beer/i ||
+        tweet.text !~ /root/i
+      }
     end
   end
 
-  context "@client.query :q => '#haiku'" do
+  context "hashtag" do
     setup do
-      @tweets = read_yaml :file => 'hashtag_haiku'
+      query   = { :q => '#haiku' }
+      fake_query(query, 'hashtag_haiku.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing the hashtag "haiku"' do
-      assert @tweets.all?{ |t| t.text =~ /#haiku/i }
+      @tweets.each do |tweet|
+        assert_match /#haiku/i, tweet.text
+      end
     end
   end
 
-  context "@client.query :q => 'from: alexiskold'" do
+  context "from" do
     setup do
-      @tweets = read_yaml :file => 'from_alexiskold'
+      query   = { :q => 'from:alexiskold' }
+      fake_query(query, 'from_alexiskold.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets sent from person "alexiskold"' do
-      assert @tweets.all?{ |t| t.from_user == 'alexiskold' }
+      @tweets.each do |tweet|
+        assert_equal 'alexiskold', tweet.from_user
+      end
     end
   end
 
-  context "@client.query :q => 'to:techcrunch'" do
+  context "to" do
     setup do
-      @tweets = read_yaml :file => 'to_techcrunch'
+      query   = { :q => 'to:techcrunch' }
+      fake_query(query, 'to_techcrunch.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets sent to person "techcrunch"' do
-      assert @tweets.all?{ |t| t.text =~ /^@techcrunch/i }
+      @tweets.each do |tweet|
+        assert_match /^@techcrunch/i, tweet.text
+      end
     end
   end
 
   context "@client.query :q => '@mashable'" do
     setup do
-      @tweets = read_yaml :file => 'reference_mashable'
+      query   = { :q => '@mashable' }
+      fake_query(query, 'reference_mashable.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets referencing person "mashable"' do
-      assert @tweets.all?{ |t| t.text =~ /@mashable/i }
+      @tweets.each do |tweet|
+        assert_match /@mashable/i, tweet.text
+      end
     end
   end
 
-  context "@client.query :q => '\"happy hour\" near:\"san francisco\"'" do
+  context "near" do
     should 'raise SearchOperatorError' do
       assert_raise TwitterSearch::SearchOperatorError do
         client = TwitterSearch::Client.new
@@ -94,7 +123,7 @@ class OperatorsTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "@client.query :q => 'near:NYC within:15mi'" do
+  context "within" do
     should 'raise SearchOperatorError' do
       assert_raise TwitterSearch::SearchOperatorError do
         client = TwitterSearch::Client.new
@@ -103,9 +132,11 @@ class OperatorsTest < Test::Unit::TestCase # :nodoc:
     end
   end
 
-  context "@client.query :q => 'superhero since:2008-05-01'" do
+  context "since" do
     setup do
-      @tweets = read_yaml :file => 'superhero_since'
+      query   = { :q => 'superhero since:2009-06-29' }
+      fake_query(query, 'superhero_since.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
@@ -116,16 +147,19 @@ class OperatorsTest < Test::Unit::TestCase # :nodoc:
       end
     end
 
-    should 'find tweets sent since date "2008-05-01" (year-month-day)' do
+    should 'find tweets sent since date "2009-06-29" (year-month-day)' do
       @tweets.each do |tweet|
-        assert convert_date(tweet.created_at) > DateTime.new(2008, 5, 1)
+        date = convert_date(tweet.created_at)
+        assert date > DateTime.new(2009, 6, 29)
       end
     end
   end
 
-  context "@client.query :q => 'ftw until:2008-05-03'" do
+  context "until" do
     setup do
-      @tweets = read_yaml :file => 'ftw_until'
+      query   = { :q => 'ftw until:2009-06-30' }
+      fake_query(query, 'ftw_until.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
@@ -136,58 +170,79 @@ class OperatorsTest < Test::Unit::TestCase # :nodoc:
       end
     end
 
-    should "find tweets sent up to date 2008-05-03" do
+    should "find tweets sent up to date 2009-06-30" do
       @tweets.each do |tweet|
-        assert convert_date(tweet.created_at) < DateTime.new(2008, 5, 3, 11, 59)
+        assert convert_date(tweet.created_at) < DateTime.new(2009, 6, 30, 11, 59)
       end
     end
   end
 
-  context "@client.query :q => 'movie -scary :)'" do
+  context "positive attitude" do
     setup do
-      @tweets = read_yaml :file => 'movie_positive_tude'
+      query   = { :q => 'movie -scary :)' }
+      fake_query(query, 'movie_positive_tude.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing "movie", but not "scary", and with a positive attitude' do
-      assert @tweets.all?{ |t| t.text =~ /movie/i && t.text !~ /scary/i && positive_attitude?(t.text) }
+      assert @tweets.all? { |tweet|
+        tweet.text =~ /movie/i &&
+        tweet.text !~ /scary/i &&
+        positive_attitude?(tweet.text)
+      }
     end
   end
 
-  context "@client.query :q => 'flight :('" do
+  context "negative attitude" do
     setup do
-      @tweets = read_yaml :file => 'flight_negative_tude'
+      query   = { :q => 'flight :(' }
+      fake_query(query, 'flight_negative_tude.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing "flight" and with a negative attitude' do
-      assert @tweets.all?{ |t| t.text =~ /flight/i && negative_attitude?(t.text) }
+      assert @tweets.all? { |tweet|
+        tweet.text =~ /flight/i &&
+        negative_attitude?(tweet.text)
+      }
     end
   end
 
-  context "@client.query :q => 'traffic ?'" do
+  context "question" do
     setup do
-      @tweets = read_yaml :file => 'traffic_question'
+      query   = { :q => 'traffic ?' }
+      fake_query(query, 'traffic_question.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing "traffic" and asking a question' do
-      assert @tweets.all?{ |t| t.text =~ /traffic/i && t.text.include?('?') }
+      assert @tweets.all? { |tweet|
+        tweet.text =~ /traffic/i &&
+        tweet.text.include?('?')
+      }
     end
   end
 
-  context "@client.query :q => 'hilarious filter:links'" do
+  context "filter" do
     setup do
-      @tweets = read_yaml :file => 'hilarious_links'
+      query   = { :q => 'hilarious filter:links' }
+      fake_query(query, 'hilarious_links.json')
+      @tweets = TwitterSearch::Client.new.query(query)
     end
 
     should_have_default_search_behaviors
 
     should 'find tweets containing "hilarious" and linking to URLs' do
-      assert @tweets.all?{ |t| t.text =~ /hilarious/i && hyperlinks?(t.text) }
+      assert @tweets.all? { |tweet|
+        tweet.text =~ /hilarious/i &&
+        hyperlinks?(tweet.text)
+      }
     end
   end
 end

@@ -14,17 +14,17 @@ Require the gem.
 
 Set up a TwitterSearch::Client. Name your client (a.k.a. 'user agent') to something meaningful, such as your app's name. This helps Twitter Search answer any questions about your use of the API.
 
-    @client = TwitterSearch::Client.new 'politweets'
+    client = TwitterSearch::Client.new('thunderthimble')
 
 ### Search
 
 Request tweets by calling the query method of your client. It takes either a String or a Hash of arguments.
 
-    @tweets = @client.query 'twitter search'
+    tweets = client.query('twitter search')
 
 The String form uses the default Twitter Search behavior, which in this example finds tweets containing both "twitter" and "search". It is identical to the more verbose, explicit version:
 
-    @tweets = @client.query :q => 'twitter search'
+    tweets = client.query(:q => 'twitter search')
 
 Use the Twitter Search API's query operators with the :q key to access a variety of behavior.
 
@@ -32,11 +32,11 @@ Use the Twitter Search API's query operators with the :q key to access a variety
 
 Request the current trending topics by calling the trends method of your client. It takes an optional Hash of arguments.
 
-    @trends = @client.trends
+    trends = client.trends
 
 The only supported option currently is exclude_hashtags to return trends that are not hashtags only.
 
-    @trends = @client.trends :exclude_hashtags => true
+    trends = client.trends(:exclude_hashtags => true)
 
 ## Search Operators
 
@@ -61,26 +61,47 @@ The following operator examples find tweets...
 
 The Twitter Search API supports foreign languages, accessible via the :lang key. Use the [ISO 639-1](http://en.wikipedia.org/wiki/ISO_639-1) codes as the value:
 
-    @tweets = @client.query :q => 'programmé', :lang => 'fr'
+    tweets = client.query(:q => 'programmé', :lang => 'fr')
 
 ### Pagination
 
 Alter the number of Tweets returned per page with the :rpp key. Stick with 10, 15, 20, 25, 30, or 50.
 
-    @tweets = @client.query :q => 'Boston Celtics', :rpp => '30'
+    tweets = client.query(:q => 'Boston Celtics', :rpp => '30')
 
 ## Gotchas
 
 * Searches are case-insenstive.
 * The "near" operator available in the Twitter Search web interface is not available via the API. You must geocode before making your Twitter Search API call, and use the :geocode key in your request using the pattern lat,lngmi or lat,lngkm:
 
-        @tweets = @client.query :q => 'Pearl Jam', :geocode => '43.4411,-70.9846mi'
+    tweets = client.query(:q => 'Pearl Jam', :geocode => '43.4411,-70.9846mi')
 
 * Searching for a positive attitude :) returns tweets containing the text :), =), :D, and :-)
 
+## Contributing
+
+Get the source and clone it.
+
+The test suite uses JSON fixtures which were created from cURL. Usage example:
+
+    query   = { :q => 'rails training' }
+    fake_query(query, 'rails_training.json')
+    @tweets = TwitterSearch::Client.new.query(query)
+
+Then you assert any necessary expectations on @tweets.
+
+To create your own JSON fixtures, first get the CGI escaped querystring in irb:
+
+    require 'lib/twitter_search'
+    TwitterSearch::Client.new.sanitize_query({ :q => 'rails training' })
+
+Then take the output and append it to a simple cURL, sending the output into your new file:
+
+    curl -i 'http://search.twitter.com/search.json?q=rails+training' > test/json/rails_training.json
+
 ## Contributors
 
-Dustin Sallings, Dan Croak, Luke Francl, Matt Sanford, Alejandro Crosa, Danny Burkes, Don Brown, & HotFusionMan.
+Dustin Sallings, Dan Croak, Luke Francl, Matt Jankowski, Matt Sanford, Alejandro Crosa, Danny Burkes, Don Brown, & HotFusionMan.
 
 ## Resources
 

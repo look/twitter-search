@@ -25,15 +25,16 @@ require 'fakeweb'
 FakeWeb.allow_net_connect = false
 
 class Test::Unit::TestCase
-  def read_yaml(opts = {})
-    raise ArgumentError if opts[:file].nil?
-    YAML.load_file(File.here / 'yaml' / "#{opts[:file]}.yaml")
-  end
-
   def parse_json(opts = {})
     raise ArgumentError if opts[:file].nil?
     json = IO.read(File.here / 'json' / "#{opts[:file]}.json")
     JSON.parse(json)
+  end
+
+  def fake_query(query, file_name)
+    sanitized_query = TwitterSearch::Client.new.sanitize_query(query)
+    uri = "#{TwitterSearch::Client::TWITTER_SEARCH_API_URL}?#{sanitized_query}"
+    FakeWeb.register_uri(:get, uri, :response => File.here / 'json' / file_name)
   end
 
   def convert_date(date)
@@ -42,21 +43,23 @@ class Test::Unit::TestCase
   end
 
   def convert_month(str)
-    months = { 'Jan' => 1, 'Feb' => 2, 'Mar' => 3, 'Apr' => 4,
-               'May' => 5, 'Jun' => 6, 'Jul' => 7, 'Aug' => 8,
+    months = { 'Jan' => 1, 'Feb' => 2,  'Mar' => 3,  'Apr' => 4,
+               'May' => 5, 'Jun' => 6,  'Jul' => 7,  'Aug' => 8,
                'Sep' => 9, 'Oct' => 10, 'Nov' => 11, 'Dec' => 12 }
     months[str]
   end
 
   def positive_attitude?(string)
-    [":)", "=)", ":-)", ":D"].any? { |emoticon| string.include?(emoticon) }
+    emoticons = [":)", "=)", ":-)", ":D", ": )"]
+    emoticons.any? { |emoticon| string.include?(emoticon) }
   end
 
   def negative_attitude?(string)
-    [":(", "=(", ":-(", ":P"].any? { |emoticon| string.include?(emoticon) }
+    emoticons = [":(", "=(", ":-(", ":P", ": ("]
+    emoticons.any? { |emoticon| string.include?(emoticon) }
   end
 
-  def hyperlinks?(str)
-    str.include?('http://') || str.include?('https://')
+  def hyperlinks?(string)
+    ["http://", "https://"].any? { |protocol| string.include?(protocol) }
   end
 end
