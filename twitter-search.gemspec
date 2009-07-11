@@ -1,11 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: twitter-search
 version: !ruby/object:Gem::Version 
-<<<<<<< HEAD:twitter-search.gemspec
-  version: 0.5.6
-=======
   version: 0.5.8
->>>>>>> cd60ddc05170b166a43cee4eed1d3af140ffec52:twitter-search.gemspec
 platform: ruby
 authors: 
 - Dustin Sallings
