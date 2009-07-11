@@ -33,14 +33,6 @@ module TwitterSearch
       @results[index]
     end
 
-    def empty?
-      @results.empty?
-    end
-
-    def pop
-      @results.pop
-    end
-
     def has_next_page?
       ! @next_page.nil?
     end
